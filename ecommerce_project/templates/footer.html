@@ -1,33 +1,690 @@
 <!-- templates/footer.html -->
-<footer class="bg-dark text-white mt-5">
-    <div class="container py-4">
-      <div class="row">
-        <div class="col-md-4">
-          <h5>Hakkımızda</h5>
-          <p>hakkımızdad yazısı</p>
+ {% load static %}
+<style>
+    /* -----------------------------------------------------------
+       Premium Footer Tasarımı
+    ------------------------------------------------------------ */
+    :root {
+      /* Footer Color Palette */
+      --footer-bg-primary: #1a1a1a;
+      --footer-bg-secondary: #2d2d2d;
+      --footer-bg-dark: #0f0f0f;
+      --footer-accent: #c62d42;
+      --footer-accent-light: #ef4444;
+      --footer-text: #e5e5e5;
+      --footer-text-muted: #a0a0a0;
+      --footer-border: #404040;
+      
+      /* Gradients */
+      --footer-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #0f0f0f 100%);
+      --footer-accent-gradient: linear-gradient(45deg, #c62d42, #ef4444);
+      
+      /* Shadows */
+      --footer-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+      --footer-item-shadow: 0 2px 10px rgba(198, 45, 66, 0.1);
+    }
+  
+    .premium-footer {
+      background: var(--footer-gradient);
+      color: var(--footer-text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin-top: 80px;
+      box-shadow: var(--footer-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+  
+    .premium-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--footer-accent-gradient);
+    }
+  
+    .footer-main {
+      padding: 60px 0 40px;
+      position: relative;
+    }
+  
+    .footer-section {
+      margin-bottom: 40px;
+    }
+  
+    .footer-title {
+      color: var(--footer-accent);
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 25px;
+      position: relative;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  
+    .footer-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background: var(--footer-accent-gradient);
+      border-radius: 2px;
+    }
+  
+    /* Company Info Section */
+    .company-info {
+      background: rgba(45, 45, 45, 0.3);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid var(--footer-border);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+  
+    .company-info:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--footer-item-shadow);
+    }
+  
+    .company-logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+  
+    .company-logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      margin-right: 15px;
+      box-shadow: 0 4px 15px rgba(198, 45, 66, 0.2);
+    }
+  
+    .company-name {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--footer-accent);
+      letter-spacing: 2px;
+    }
+  
+    .company-description {
+      color: var(--footer-text-muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+  
+    /* Contact Info */
+    .contact-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+  
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(64, 64, 64, 0.3);
+      transition: all 0.3s ease;
+    }
+  
+    .contact-item:hover {
+      padding-left: 10px;
+      color: var(--footer-accent-light);
+    }
+  
+    .contact-icon {
+      background: var(--footer-accent-gradient);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+  
+    .contact-item:hover .contact-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  
+    /* Categories Section */
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+  
+    .category-card {
+      background: rgba(45, 45, 45, 0.4);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--footer-border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+  
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(198, 45, 66, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+  
+    .category-card:hover::before {
+      left: 100%;
+    }
+  
+    .category-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--footer-accent);
+      box-shadow: 0 5px 20px rgba(198, 45, 66, 0.15);
+    }
+  
+    .category-link {
+      color: var(--footer-text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      display: block;
+      transition: all 0.3s ease;
+    }
+  
+    .category-card:hover .category-link {
+      color: var(--footer-accent-light);
+    }
+  
+    .subcategory-list {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0 0 0;
+    }
+  
+    .subcategory-item {
+      margin-bottom: 8px;
+    }
+  
+    .subcategory-link {
+      color: var(--footer-text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      display: block;
+      padding: 5px 0;
+    }
+  
+    .subcategory-link:hover {
+      color: var(--footer-accent-light);
+      padding-left: 10px;
+    }
+  
+    /* Links Section */
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+    }
+  
+    .link-group {
+      background: rgba(45, 45, 45, 0.2);
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--footer-border);
+      transition: all 0.3s ease;
+    }
+  
+    .link-group:hover {
+      background: rgba(45, 45, 45, 0.4);
+      transform: translateY(-2px);
+    }
+  
+    .link-group-title {
+      color: var(--footer-accent);
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  
+    .footer-link {
+      color: var(--footer-text-muted);
+      text-decoration: none;
+      display: block;
+      padding: 8px 0;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+  
+    .footer-link::before {
+      content: '→';
+      opacity: 0;
+      margin-right: 8px;
+      transition: all 0.3s ease;
+    }
+  
+    .footer-link:hover {
+      color: var(--footer-accent-light);
+      padding-left: 15px;
+    }
+  
+    .footer-link:hover::before {
+      opacity: 1;
+    }
+  
+    /* Social Media */
+    .social-media {
+      text-align: center;
+      margin: 40px 0;
+    }
+  
+    .social-title {
+      color: var(--footer-accent);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+  
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+  
+    .social-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--footer-accent-gradient);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+  
+    .social-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+  
+    .social-icon:hover::before {
+      transform: translateX(100%);
+    }
+  
+    .social-icon:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 10px 25px rgba(198, 45, 66, 0.3);
+    }
+  
+    /* Footer Bottom */
+    .footer-bottom {
+      background: var(--footer-bg-dark);
+      padding: 25px 0;
+      border-top: 1px solid var(--footer-border);
+      text-align: center;
+    }
+  
+    .footer-bottom-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+  
+    .copyright {
+      color: var(--footer-text-muted);
+      font-size: 14px;
+    }
+  
+    .footer-bottom-links {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+  
+    .footer-bottom-link {
+      color: var(--footer-text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+  
+    .footer-bottom-link:hover {
+      color: var(--footer-accent-light);
+    }
+  
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .footer-main {
+        padding: 40px 0 30px;
+      }
+  
+      .company-info {
+        padding: 25px 20px;
+        margin-bottom: 30px;
+      }
+  
+      .company-name {
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+  
+      .company-logo img {
+        width: 50px;
+        height: 50px;
+      }
+  
+      .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+  
+      .footer-links {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+  
+      .link-group {
+        padding: 20px 15px;
+      }
+  
+      .footer-bottom-content {
+        flex-direction: column;
+        text-align: center;
+      }
+  
+      .footer-bottom-links {
+        justify-content: center;
+        gap: 20px;
+      }
+  
+      .social-icons {
+        gap: 12px;
+      }
+  
+      .social-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      .premium-footer {
+        margin-top: 60px;
+      }
+  
+      .footer-main {
+        padding: 30px 0 20px;
+      }
+  
+      .company-info {
+        padding: 20px 15px;
+      }
+  
+      .company-name {
+        font-size: 20px;
+      }
+  
+      .footer-links {
+        grid-template-columns: 1fr;
+      }
+  
+      .contact-item {
+        margin-bottom: 12px;
+        padding: 10px 0;
+      }
+  
+      .contact-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+      }
+  
+      .category-card {
+        padding: 15px;
+      }
+  
+      .link-group {
+        padding: 15px;
+      }
+    }
+  
+    /* Animation Keyframes */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  
+    .premium-footer * {
+      animation: fadeInUp 0.6s ease-out;
+    }
+  
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+  
+  <footer class="premium-footer">
+    <div class="container">
+      <!-- Main Footer Content -->
+      <div class="footer-main">
+        <div class="row">
+          <!-- Company Info Section -->
+          <div class="col-lg-4 col-md-6">
+            <div class="company-info">
+              <div class="company-logo">
+                <img src="{% static 'img/idas2.png' %}" alt="İdaş As Outlet Logo">
+                <div class="company-name">İdaş As Outlet</div>
+              </div>
+              <p class="company-description">
+                Kaliteli ürünler, uygun fiyatlar ve güvenilir hizmet anlayışıyla sizlere hizmet vermekteyiz. 
+                Moda dünyasının en yeni trendlerini keşfedin.
+              </p>
+            </div>
+          </div>
+  
+          <!-- Contact Information -->
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-section">
+              <h5 class="footer-title">İletişim Bilgileri</h5>
+              <ul class="contact-list">
+                <li class="contact-item">
+                  <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                  </div>
+                  <div>
+                    <strong>Adres:</strong><br>
+                    Örnek Mahallesi, Ticaret Caddesi No:123<br>
+                    Gaziantep, Türkiye
+                  </div>
+                </li>
+                <li class="contact-item">
+                  <div class="contact-icon">
+                    <i class="fas fa-phone"></i>
+                  </div>
+                  <div>
+                    <strong>Telefon:</strong><br>
+                    +90 342 123 45 67
+                  </div>
+                </li>
+                <li class="contact-item">
+                  <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                  </div>
+                  <div>
+                    <strong>E-posta:</strong><br>
+                    info@idasasoutlet.com
+                  </div>
+                </li>
+                <li class="contact-item">
+                  <div class="contact-icon">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div>
+                    <strong>Çalışma Saatleri:</strong><br>
+                    Pazartesi - Cumartesi: 09:00 - 22:00
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+  
+          <!-- Quick Links -->
+          <div class="col-lg-4 col-md-12">
+            <div class="footer-section">
+              <h5 class="footer-title">Hızlı Linkler</h5>
+              <div class="footer-links">
+                <div class="link-group">
+                  <h6 class="link-group-title">Müşteri</h6>
+                  <a href="#" class="footer-link">Hesabım</a>
+                  <a href="#" class="footer-link">Siparişlerim</a>
+                  <a href="#" class="footer-link">Favorilerim</a>
+                  <a href="#" class="footer-link">Sepetim</a>
+                </div>
+                <div class="link-group">
+                  <h6 class="link-group-title">Kurumsal</h6>
+                  <a href="#" class="footer-link">Hakkımızda</a>
+                  <a href="#" class="footer-link">İletişim</a>
+                  <a href="#" class="footer-link">Mağazalarımız</a>
+                  <a href="#" class="footer-link">Kariyer</a>
+                </div>
+                <div class="link-group">
+                  <h6 class="link-group-title">Destek</h6>
+                  <a href="#" class="footer-link">Yardım Merkezi</a>
+                  <a href="#" class="footer-link">SSS</a>
+                  <a href="#" class="footer-link">Canlı Destek</a>
+                  <a href="#" class="footer-link">İade & Değişim</a>
+                </div>
+                <div class="link-group">
+                  <h6 class="link-group-title">Yasal</h6>
+                  <a href="#" class="footer-link">Gizlilik Politikası</a>
+                  <a href="#" class="footer-link">Kullanım Şartları</a>
+                  <a href="#" class="footer-link">Çerez Politikası</a>
+                  <a href="#" class="footer-link">KVKK</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <h5>İletişim</h5>
-          <ul class="list-unstyled">
-            <li><i class="bi bi-geo-alt"></i> Örnek Mah. No:123, İstanbul</li>
-            <li><i class="bi bi-phone"></i> +90 212 123 45 67</li>
-            <li><i class="bi bi-envelope"></i> info@site.com</li>
-          </ul>
+  
+        <!-- Categories Section -->
+        {% if menu_categories %}
+        <div class="row mt-5">
+          <div class="col-12">
+            <div class="footer-section">
+              <h5 class="footer-title">Kategorilerimiz</h5>
+              <div class="categories-grid">
+                {% for category in menu_categories %}
+                  <div class="category-card">
+                    <a href="{% url 'category_detail' category.slug %}" class="category-link">
+                      {{ category.name }}
+                    </a>
+                    {% if category.children.all %}
+                      <ul class="subcategory-list">
+                        {% for child in category.children.all|slice:":4" %}
+                          {% if child.is_active %}
+                            <li class="subcategory-item">
+                              <a href="{% url 'category_detail' child.slug %}" class="subcategory-link">
+                                {{ child.name }}
+                              </a>
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                        {% if category.children.all|length > 4 %}
+                          <li class="subcategory-item">
+                            <a href="{% url 'category_detail' category.slug %}" class="subcategory-link">
+                              <em>+ {{ category.children.all|length|add:"-4" }} kategori daha...</em>
+                            </a>
+                          </li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <h5>Linkler</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white">Hakkımızda</a></li>
-            <li><a href="#" class="text-white">Gizlilik Politikası</a></li>
-            <li><a href="#" class="text-white">Kullanım Şartları</a></li>
-            <li><a href="#" class="text-white">SSS</a></li>
-          </ul>
+        {% endif %}
+  
+        <!-- Social Media Section -->
+        <div class="social-media">
+          <h5 class="social-title">Bizi Takip Edin</h5>
+          <div class="social-icons">
+            <a href="#" class="social-icon" title="Facebook" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-icon" title="Instagram" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="social-icon" title="Twitter" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="social-icon" title="YouTube" aria-label="YouTube">
+              <i class="fab fa-youtube"></i>
+            </a>
+            <a href="#" class="social-icon" title="LinkedIn" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="social-icon" title="WhatsApp" aria-label="WhatsApp">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <hr class="bg-secondary">
-      <div class="text-center">
-        &copy; {{ now.year }} E-Ticaret Sitesi. Tüm hakları saklıdır.
-      </div>
+  
+      <!-- Footer Bottom -->
+      <!-- <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <div class="copyright">
+            &copy; {{ now.year }} İdaş As Outlet. Tüm hakları saklıdır.
+          </div>
+          <div class="footer-bottom-links">
+            <a href="#" class="footer-bottom-link">Gizlilik</a>
+            <a href="#" class="footer-bottom-link">Şartlar</a>
+            <a href="#" class="footer-bottom-link">Çerezler</a>
+            <a href="#" class="footer-bottom-link">Sitemap</a>
+          </div>
+        </div>
+      </div> -->
     </div>
   </footer>
-  
