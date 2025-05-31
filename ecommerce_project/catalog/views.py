@@ -2,21 +2,22 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
-from .models import Category, Product
+from .models import Category, Product, SliderImage
 
 class HomeView(ListView):
-    """
-    Anasayfa: Tüm aktif ürünleri (veya karışık  şekilde random çekebiliriz).
-    Burada basitçe son eklenen ya da rastgele ürün listeleri gösterelim.
-    """
     model = Product
     template_name = 'catalog/home.html'
     context_object_name = 'products'
-    paginate_by = 12  # İsteğe bağlı sayfalama
+    paginate_by = 16
 
     def get_queryset(self):
-        return Product.objects.filter(is_active=True).order_by('?')  # rastgele sıralama
+        return Product.objects.filter(is_active=True).order_by('-created_at')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['slider_images'] = SliderImage.objects.filter(is_active=True).order_by('order')
+        context['is_paginated'] = self.get_queryset().count() > self.paginate_by
+        return context
 
 class CategoryDetailView(ListView):
     """

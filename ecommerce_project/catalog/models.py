@@ -112,5 +112,19 @@ class ProductImage(models.Model):
     def __str__(self):
         return f"{self.product.name} resmi"
 
+class SliderImage(models.Model):
+    image      = models.ImageField(upload_to='slider_images/', verbose_name="Slider Görseli")
+    title      = models.CharField(max_length=100, blank=True, verbose_name="Başlık (Opsiyonel)")
+    caption    = models.TextField(blank=True, verbose_name="Açıklama (Opsiyonel)")
+    order      = models.PositiveIntegerField(default=0, verbose_name="Sıra")
+    is_active  = models.BooleanField(default=True, verbose_name="Aktif mi?")
+    created_at = models.DateTimeField(auto_now_add=True)
 
-# Sepet ve Favori modelleri başka app’lerde (cart, favorites) ele alınacak.
+    class Meta:
+        ordering = ['order']
+        verbose_name = "Slider Görseli"
+        verbose_name_plural = "Slider Görselleri"
+
+    def __str__(self):
+        # Başlık varsa onu, yoksa ID’yi göster
+        return self.title if self.title else f"Slider Görseli #{self.id}"

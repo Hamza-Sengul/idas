@@ -1,7 +1,7 @@
 # catalog/admin.py
 
 from django.contrib import admin
-from .models import Category, Product, ProductVariant, ProductImage
+from .models import Category, Product, ProductVariant, ProductImage, SliderImage
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -42,3 +42,12 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('product', 'is_featured')
     list_filter = ('is_featured',)
     search_fields = ('product__name',)
+
+
+
+@admin.register(SliderImage)
+class SliderImageAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'order', 'is_active', 'created_at')
+    list_editable = ('order', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('title', 'caption')

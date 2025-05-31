@@ -1,4 +1,4 @@
-<!-- catalog/templates/catalog/home.html -->
+{# catalog/templates/catalog/home.html #}
 {% extends 'base.html' %}
 {% load humanize %}
 
@@ -6,499 +6,589 @@
 
 {% block content %}
 <style>
-    /* ----------------------------------------------------------------------------------------------------
-       Global Reset + Box-Sizing
-    ----------------------------------------------------------------------------------------------------- */
-    *, *::before, *::after {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+  /* ----------------------------------------------------------------------------------------------------
+     Global Reset & Box-Sizing
+  ----------------------------------------------------------------------------------------------------- */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Renk Paleti & Değişkenler
+  ----------------------------------------------------------------------------------------------------- */
+  :root {
+    --primary-red:       #dc2626;
+    --secondary-red:     #b91c1c;
+    --dark-red:          #991b1b;
+    --light-red:         #fecaca;
+    --accent-red:        #ef4444;
+    --dark-gray:         #1f2937;
+    --medium-gray:       #6b7280;
+    --light-gray:        #f9fafb;
+    --border-gray:       #e5e7eb;
+    --text-default:      #111827;
+    --font-sans:         'Open Sans', Helvetica, Arial, sans-serif;
+    --transition-fast:   0.3s ease;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Site Genel Stil & Tipografi
+  ----------------------------------------------------------------------------------------------------- */
+  body {
+    background-color: var(--light-gray);
+    color: var(--text-default);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  h1, h2, h3, h4, h5 {
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Tam Ekran Slider (Carousel)
+  ----------------------------------------------------------------------------------------------------- */
+  #homeCarousel {
+    position: relative;
+    width: 100%;
+    height: 75vh;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  #homeCarousel .carousel-inner {
+    height: 100%;
+  }
+  #homeCarousel .carousel-item {
+    height: 100%;
+  }
+  #homeCarousel .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #homeCarousel .carousel-caption {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+  }
+  #homeCarousel .carousel-control-prev-icon,
+  #homeCarousel .carousel-control-next-icon {
+    filter: invert(1);
+    width: 3rem;
+    height: 3rem;
+  }
+  #homeCarousel .carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.7);
+  }
+  #homeCarousel .carousel-indicators .active {
+    background-color: #fff;
+  }
+  @media (max-width: 576px) {
+    #homeCarousel {
+      height: 50vh;
     }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Renk Paleti Değişkenleri
-    ----------------------------------------------------------------------------------------------------- */
-    :root {
-        --primary-red:       #dc2626;
-        --secondary-red:     #b91c1c;
-        --dark-red:          #991b1b;
-        --light-red:         #fecaca;
-        --accent-red:        #ef4444;
-        --dark-gray:         #1f2937;
-        --medium-gray:       #6b7280;
-        --light-gray:        #f9fafb;
-        --border-gray:       #e5e7eb;
-        --text-default:      #111827; /* koyu gri/siyah ton */
-        --font-sans:         'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    #homeCarousel .carousel-caption {
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
     }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Body & Temel Tipografi
-    ----------------------------------------------------------------------------------------------------- */
-    body {
-        background-color: var(--light-gray);
-        color: var(--text-default);
-        font-family: var(--font-sans);
-        line-height: 1.6;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Hero Bölümü
+  ----------------------------------------------------------------------------------------------------- */
+  .hero-section {
+    position: relative;
+    background: linear-gradient(135deg, var(--dark-gray) 0%, var(--primary-red) 100%);
+    padding: 4rem 0 2rem;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+    opacity: 0.6;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    padding: 0 1rem;
+  }
+  .hero-content .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 0.5rem;
+  }
+  .hero-content .section-subtitle {
+    font-size: 1.125rem;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+  @media (max-width: 768px) {
+    .hero-content .section-title {
+      font-size: 2rem;
     }
-    
-    a {
-        text-decoration: none;
-        color: inherit;
+    .hero-content .section-subtitle {
+      font-size: 1rem;
     }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Hero Bölümü
-    ----------------------------------------------------------------------------------------------------- */
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Ürün Kartları Grid
+  ----------------------------------------------------------------------------------------------------- */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .product-card {
+    background: #fff;
+    border: 1px solid var(--border-gray);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: relative;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.10);
+    border-color: var(--primary-red);
+  }
+  .product-card .card-img-wrapper {
+    position: relative;
+    height: 200px;
+    background: #fefefe;
+    overflow: hidden;
+  }
+  .product-card .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-fast);
+  }
+  .product-card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+  .product-card .price-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: var(--primary-red);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+  }
+  .product-card .card-body-clean {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .product-card .product-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-card .product-description {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-card .card-actions {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-gray);
+    margin-top: auto;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Buton Stilleri
+  ----------------------------------------------------------------------------------------------------- */
+  .btn-clean {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    padding: 10px 16px;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary-clean {
+    background-color: var(--primary-red);
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(220,38,38,0.2);
+  }
+  .btn-primary-clean:hover {
+    background-color: var(--secondary-red);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220,38,38,0.3);
+    color: #fff;
+  }
+  .btn-outline-clean {
+    background: transparent;
+    border: 1px solid var(--border-gray);
+    color: var(--medium-gray);
+  }
+  .btn-outline-clean:hover {
+    background: var(--light-gray);
+    border-color: var(--primary-red);
+    color: var(--primary-red);
+  }
+  .btn-icon-only {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .action-buttons .btn-clean:first-child {
+    flex: 1;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Giriş Yönlendirme (Login Prompt)
+  ----------------------------------------------------------------------------------------------------- */
+  .login-prompt {
+    background-color: var(--light-gray);
+    color: var(--medium-gray);
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-gray);
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .login-prompt a {
+    color: var(--primary-red);
+    font-weight: 600;
+  }
+  .login-prompt a:hover {
+    text-decoration: underline;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Boş İçerik Durumu (Empty State)
+  ----------------------------------------------------------------------------------------------------- */
+  .empty-state {
+    background-color: var(--light-gray);
+    text-align: center;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  .empty-state i {
+    color: var(--medium-gray);
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  .empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+  }
+  .empty-state p {
+    font-size: 1rem;
+    color: var(--medium-gray);
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Sayfalama (Pagination) Stilleri
+  ----------------------------------------------------------------------------------------------------- */
+  .pagination-clean {
+    margin-top: 3rem;
+    text-align: center;
+  }
+  .pagination-clean .page-link {
+    border: 1px solid var(--border-gray);
+    border-radius: 8px;
+    margin: 0 4px;
+    padding: 10px 14px;
+    color: var(--medium-gray);
+    font-weight: 500;
+    background-color: #fff;
+    transition: all var(--transition-fast);
+  }
+  .pagination-clean .page-link:hover {
+    background-color: var(--primary-red);
+    color: #fff;
+    border-color: var(--primary-red);
+  }
+  .pagination-clean .page-item.active .page-link {
+    background-color: var(--primary-red);
+    color: #fff;
+    border-color: var(--primary-red);
+  }
+  .pagination-clean .page-item.disabled .page-link {
+    background-color: var(--light-gray);
+    color: var(--medium-gray);
+    border-color: var(--border-gray);
+    cursor: default;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Responsive Tasarım
+  ----------------------------------------------------------------------------------------------------- */
+  @media (max-width: 992px) {
+    #homeCarousel {
+      height: 50vh;
+    }
     .hero-section {
-        position: relative;
-        overflow: hidden;
-        background: linear-gradient(135deg, var(--dark-gray) 0%, var(--primary-red) 100%);
-        padding: 5rem 0 3rem;
-        margin-bottom: 3rem;
+      padding: 3rem 0 1.5rem;
     }
-    
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 70%);
-        opacity: 0.6;
-    }
-    
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        text-align: center;
-        padding: 0 1rem;
-    }
-    
     .section-title {
-        font-size: 2.75rem;
-        font-weight: 700;
-        color: #fff;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        letter-spacing: -0.02em;
-        margin-bottom: 0.5rem;
+      font-size: 2rem;
     }
-    
     .section-subtitle {
-        font-size: 1.125rem;
-        font-weight: 300;
-        color: rgba(255,255,255,0.9);
-        letter-spacing: 0.01em;
+      font-size: 1rem;
     }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Kart Tasarımı (Ürün Kartları)
-    ----------------------------------------------------------------------------------------------------- */
-    .product-card {
-        background: #ffffff;
-        border: 1px solid var(--border-gray);
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        position: relative;
-        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        animation: fadeIn 0.6s ease forwards;
-        opacity: 0;
+    .product-card .card-img-wrapper {
+      height: 180px;
     }
-    
-    .product-card:nth-child(1) { animation-delay: 0.1s; }
-    .product-card:nth-child(2) { animation-delay: 0.2s; }
-    .product-card:nth-child(3) { animation-delay: 0.3s; }
-    .product-card:nth-child(4) { animation-delay: 0.4s; }
-    /* ... gerekirse daha fazla kart için benzer delay ekleyebilirsiniz ... */
-    
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.10);
-        border-color: var(--primary-red);
-    }
-    
-    /* Resim Kutu + Resim Ayarları */
-    .card-img-wrapper {
-        position: relative;
-        height: 220px;
-        background: #fff;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-    
-    .card-img-top {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-    
-    .product-card:hover .card-img-top {
-        transform: scale(1.05);
-    }
-    
-    /* Fiyat Etiketi (Badge) */
-    .price-badge {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background-color: var(--primary-red);
-        color: #fff;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-    }
-    
-    /* Kart İçeriği (Başlık, Açıklama vb.) */
     .card-body-clean {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
+      padding: 1rem;
     }
-    
-    .product-title {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: var(--dark-gray);
-        margin-bottom: 0.75rem;
-        line-height: 1.4;
-        letter-spacing: -0.01em;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    .product-description {
-        font-size: 0.9rem;
-        color: var(--medium-gray);
-        line-height: 1.5;
-        margin-bottom: 1.25rem;
-        flex: 1;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    /* Kart Altı Buton / Aksiyon Alanı */
-    .card-actions {
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-gray);
-        margin-top: auto;
-    }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Düğme (Buton) Stilleri
-    ----------------------------------------------------------------------------------------------------- */
     .btn-clean {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 0.9rem;
-        border-radius: 8px;
-        padding: 10px 16px;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
+      padding: 8px 12px;
+      font-size: 0.85rem;
     }
-    
-    .btn-primary-clean {
-        background-color: var(--primary-red);
-        color: #fff;
-        box-shadow: 0 2px 4px rgba(220,38,38,0.2);
+    .products-grid {
+      gap: 1rem;
     }
-    
-    .btn-primary-clean:hover {
-        background-color: var(--secondary-red);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(220,38,38,0.3);
-        color: #fff;
+  }
+  @media (max-width: 576px) {
+    #homeCarousel {
+      height: 40vh;
     }
-    
-    .btn-outline-clean {
-        background: transparent;
-        border: 1px solid var(--border-gray);
-        color: var(--medium-gray);
+    .hero-section {
+      padding: 2rem 0 1rem;
     }
-    
-    .btn-outline-clean:hover {
-        background: var(--light-gray);
-        border-color: var(--primary-red);
-        color: var(--primary-red);
+    .section-title {
+      font-size: 1.75rem;
     }
-    
-    .btn-icon-only {
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .section-subtitle {
+      font-size: 0.9rem;
     }
-    
-    /* Aksiyon Butonları Gruplaması */
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-        align-items: center;
+    .product-card .card-img-wrapper {
+      height: 140px;
     }
-    
-    .action-buttons .btn-clean:first-child {
-        flex: 1;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Animasyonlar
+  ----------------------------------------------------------------------------------------------------- */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Giriş Yönlendirme (Login Prompt)
-    ----------------------------------------------------------------------------------------------------- */
-    .login-prompt {
-        background-color: var(--light-gray);
-        color: var(--medium-gray);
-        padding: 14px 16px;
-        border-radius: 8px;
-        border: 1px solid var(--border-gray);
-        text-align: center;
-        font-size: 0.9rem;
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-    
-    .login-prompt a {
-        color: var(--primary-red);
-        font-weight: 600;
-    }
-    
-    .login-prompt a:hover {
-        text-decoration: underline;
-    }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Boş İçerik Durumu (Empty State)
-    ----------------------------------------------------------------------------------------------------- */
-    .empty-state {
-        background-color: var(--light-gray);
-        text-align: center;
-        padding: 3rem 2rem;
-        border-radius: 12px;
-        margin: 2rem 0;
-    }
-    
-    .empty-state i {
-        color: var(--medium-gray);
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    
-    .empty-state h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--dark-gray);
-        margin-bottom: 0.5rem;
-    }
-    
-    .empty-state p {
-        font-size: 1rem;
-        color: var(--medium-gray);
-    }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Sayfalama (Pagination) Stilleri
-    ----------------------------------------------------------------------------------------------------- */
-    .pagination-clean {
-        margin-top: 3rem;
-        text-align: center;
-    }
-    
-    .pagination-clean .page-link {
-        border: 1px solid var(--border-gray);
-        border-radius: 8px;
-        margin: 0 4px;
-        padding: 10px 14px;
-        color: var(--medium-gray);
-        font-weight: 500;
-        background-color: #fff;
-        transition: all 0.3s ease;
-    }
-    
-    .pagination-clean .page-link:hover {
-        background-color: var(--primary-red);
-        color: #fff;
-        border-color: var(--primary-red);
-    }
-    
-    .pagination-clean .page-item.active .page-link {
-        background-color: var(--primary-red);
-        color: #fff;
-        border-color: var(--primary-red);
-    }
-    
-    .pagination-clean .page-item.disabled .page-link {
-        background-color: var(--light-gray);
-        color: var(--medium-gray);
-        border-color: var(--border-gray);
-        cursor: default;
-    }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Responsive (Duyarlı) Tasarım
-    ----------------------------------------------------------------------------------------------------- */
-    @media (max-width: 768px) {
-        .section-title {
-            font-size: 2.25rem;
-        }
-        .section-subtitle {
-            font-size: 1rem;
-        }
-        .hero-section {
-            padding: 4rem 0 2.5rem;
-        }
-        .card-img-wrapper {
-            height: 180px;
-        }
-        .card-body-clean {
-            padding: 1rem;
-        }
-        .btn-clean {
-            padding: 8px 12px;
-            font-size: 0.85rem;
-        }
-    }
-    
-    /* ----------------------------------------------------------------------------------------------------
-       Subtle Animation: Kartlar Yavaşça Yukarı Doğru Gelme (fadeIn)
-    ----------------------------------------------------------------------------------------------------- */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+  }
 </style>
 
-<!-- Hero Section -->
-<div class="hero-section">
-    <div class="container">
-        <div class="hero-content">
-            <h1 class="section-title">Öne Çıkan Ürünler</h1>
-            <p class="section-subtitle">En kaliteli ürünleri keşfedin ve özel fırsatlardan yararlanın</p>
-        </div>
-    </div>
+<!-- Tam Ekran Slider (Carousel) -->
+<div id="homeCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+  <!-- Göstergeler (Indicators) -->
+  <div class="carousel-indicators">
+    {% for slide in slider_images %}
+      <button type="button"
+              data-bs-target="#homeCarousel"
+              data-bs-slide-to="{{ forloop.counter0 }}"
+              class="{% if forloop.first %}active{% endif %}"
+              aria-current="{% if forloop.first %}true{% endif %}"
+              aria-label="Slide {{ forloop.counter }}">
+      </button>
+    {% endfor %}
+  </div>
+
+  <!-- Slider İçeriği -->
+  <div class="carousel-inner">
+    {% for slide in slider_images %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+        <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.title|default:'Slider Görseli' }}">
+        {% if slide.title or slide.caption %}
+          <div class="carousel-caption d-none d-md-block">
+            {% if slide.title %}
+              <h3>{{ slide.title }}</h3>
+            {% endif %}
+            {% if slide.caption %}
+              <p>{{ slide.caption }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Önceki / Sonraki Kontrolleri -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Önceki</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Sonraki</span>
+  </button>
 </div>
 
-<!-- Products Grid -->
-<div class="container">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% load static %}
-        {% for product in products %}
-            <div class="col">
-                <div class="card product-card">
-                    <!-- Ürün Resmi -->
-                    <div class="card-img-wrapper">
-                        {% with img=product.get_featured_image %}
-                            {% if img %}
-                                <img src="{{ img.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                            {% else %}
-                                <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Resim yok">
-                            {% endif %}
-                        {% endwith %}
-                        <div class="price-badge">
-                            {{ product.get_min_price|floatformat:2 }}₺
-                        </div>
-                    </div>
-
-                    <!-- Ürün Detayları -->
-                    <div class="card-body-clean">
-                        <h5 class="product-title">{{ product.name }}</h5>
-                        <p class="product-description">{{ product.description|truncatechars:80 }}</p>
-                        
-                        <!-- İşlem Butonları -->
-                        <div class="card-actions">
-                            {% if user.is_authenticated %}
-                                <div class="action-buttons">
-                                    {% with first_variant=product.variants.first %}
-                                        {% if first_variant %}
-                                            <form method="get" action="{% url 'add_to_cart' first_variant.id %}" style="flex: 1;">
-                                                <button type="submit" class="btn-clean btn-primary-clean w-100">
-                                                    <i class="bi bi-cart-plus me-1"></i> Sepete Ekle
-                                                </button>
-                                            </form>
-                                        {% endif %}
-                                    {% endwith %}
-                                    <a href="{% url 'add_to_favorites' product.id %}" class="btn-clean btn-outline-clean btn-icon-only">
-                                        <i class="bi bi-heart"></i>
-                                    </a>
-                                </div>
-                            {% else %}
-                                <div class="login-prompt">
-                                    <a href="{% url 'login' %}">Giriş yapın</a> ve alışverişe başlayın
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% empty %}
-            <div class="col-12">
-                <div class="empty-state">
-                    <i class="bi bi-box-seam"></i>
-                    <h3>Henüz ürün bulunmuyor</h3>
-                    <p>Yakında harika ürünlerle karşınızda olacağız!</p>
-                </div>
-            </div>
-        {% endfor %}
+<!-- Hero Bölümü -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="section-title">Öne Çıkan Ürünler</h1>
+      <p class="section-subtitle">En kaliteli ürünleri keşfedin ve özel fırsatlardan yararlanın</p>
     </div>
+  </div>
+</section>
 
-    <!-- Sayfalama (Pagination) -->
-    {% if is_paginated %}
-        <div class="pagination-clean">
-            <nav aria-label="Sayfa navigasyonu">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Önceki">
-                                <i class="bi bi-chevron-left"></i>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link"><i class="bi bi-chevron-left"></i></span>
-                        </li>
-                    {% endif %}
-
-                    {% for num in paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Sonraki">
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="page-item disabled">
-                            <span class="page-link"><i class="bi bi-chevron-right"></i></span>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+<!-- Ürünler Grid -->
+<section class="container">
+  <div class="products-grid">
+    {% for product in products %}
+      <div class="product-card">
+        <!-- Ürün Resmi -->
+        <div class="card-img-wrapper">
+          {% with img=product.get_featured_image %}
+            {% if img %}
+              <img src="{{ img.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+              <img src="" class="card-img-top" alt="Resim yok">
+            {% endif %}
+          {% endwith %}
+          <div class="price-badge">
+            {{ product.get_min_price|floatformat:2 }}₺
+          </div>
         </div>
-    {% endif %}
-</div>
+        <!-- Ürün Detayları -->
+        <div class="card-body-clean">
+          <h5 class="product-title">{{ product.name }}</h5>
+          <p class="product-description">{{ product.description|truncatechars:80 }}</p>
+          <!-- Butonlar -->
+          <div class="card-actions">
+            {% if user.is_authenticated %}
+              <div class="action-buttons">
+                {% with first_variant=product.variants.first %}
+                  {% if first_variant %}
+                    <form method="get" action="{% url 'add_to_cart' first_variant.id %}" style="flex: 1;">
+                      <button type="submit" class="btn-clean btn-primary-clean w-100">
+                        <i class="bi bi-cart-plus me-1"></i> Sepete Ekle
+                      </button>
+                    </form>
+                  {% endif %}
+                {% endwith %}
+                <a href="{% url 'add_to_favorites' product.id %}" class="btn-clean btn-outline-clean btn-icon-only">
+                  <i class="bi bi-heart"></i>
+                </a>
+              </div>
+            {% else %}
+              <div class="login-prompt">
+                <a href="{% url 'login' %}">Giriş yapın</a> ve alışverişe başlayın
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-state">
+        <i class="bi bi-box-seam"></i>
+        <h3>Henüz ürün bulunmuyor</h3>
+        <p>Yakında harika ürünlerle karşınızda olacağız!</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Sayfalama -->
+  {% if is_paginated %}
+    <div class="pagination-clean">
+      <nav aria-label="Sayfa navigasyonu">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Önceki">
+                <i class="bi bi-chevron-left"></i>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+            </li>
+          {% endif %}
+
+          {% for num in paginator.page_range %}
+            {% if page_obj.number == num %}
+              <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+              </li>
+            {% else %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Sonraki">
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled">
+              <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  {% endif %}
+</section>
 {% endblock %}

@@ -1,49 +1,316 @@
-<!-- catalog/templates/catalog/category_detail.html -->
+{# catalog/templates/catalog/category_detail.html #}
 {% extends 'base.html' %}
 {% load static %}
-{% load humanize %}  {# Eğer humanize filtresini kullanıyorsanız #}
+{% load humanize %}
 
-{% block title %}{{ category.name }} - Kategori{% endblock %}
+{% block title %}{{ category.name }} – Kategori{% endblock %}
 
 {% block content %}
-  <h2 class="mb-4">{{ category.name }}</h2>
+<style>
+  /* ----------------------------------------------------------------------------------------------------
+     Global Reset & Box-Sizing
+  ---------------------------------------------------------------------------------------------------- */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-    {% for product in products %}
-      <div class="col">
-        <div class="card h-100 shadow-sm">
-          {# 1) get_featured_image() metodunu kullanıyoruz #}
-          {% with img=product.get_featured_image %}
-            {% if img %}
-              <img src="{{ img.image.url }}" class="card-img-top" alt="{{ product.name }}">
-            {% else %}
-              <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Resim yok">
-            {% endif %}
-          {% endwith %}
+  /* ----------------------------------------------------------------------------------------------------
+     Renk Paleti & Değişkenler
+  ---------------------------------------------------------------------------------------------------- */
+  :root {
+    --primary-red:       #dc2626;
+    --secondary-red:     #b91c1c;
+    --dark-gray:         #1f2937;
+    --medium-gray:       #6b7280;
+    --light-gray:        #f9fafb;
+    --border-gray:       #e5e7eb;
+    --text-default:      #111827;
+    --font-sans:         'Open Sans', Helvetica, Arial, sans-serif;
+    --transition-fast:   0.3s ease;
+    --card-radius:       12px;
+    --shadow-light:      0 2px 8px rgba(0,0,0,0.05);
+    --shadow-hover:      0 8px 25px rgba(0,0,0,0.10);
+  }
 
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ product.name }}</h5>
-            <p class="card-text text-truncate">{{ product.description|truncatechars:60 }}</p>
-            <div class="mt-auto">
-              <span class="fw-bold">{{ product.get_min_price|floatformat:2 }}₺</span>
-              <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-primary float-end">İncele</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    {% empty %}
-      <p>Bu kategoride aktif ürün bulunamadı.</p>
-    {% endfor %}
+  /* ----------------------------------------------------------------------------------------------------
+     Site Genel Tipografi
+  ---------------------------------------------------------------------------------------------------- */
+  body {
+    background-color: var(--light-gray);
+    color: var(--text-default);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+  h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--dark-gray);
+  }
+  a {
+    color: var(--primary-red);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Başlık Bölümü
+  ---------------------------------------------------------------------------------------------------- */
+  .category-header {
+    background: var(--primary-red);
+    color: #fff;
+    padding: 2rem 1rem;
+    border-radius: var(--card-radius);
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-light);
+  }
+  .category-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Ürün Grid & Kart Tasarımı
+  ---------------------------------------------------------------------------------------------------- */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .product-card {
+    background: #fff;
+    border: 1px solid var(--border-gray);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    box-shadow: var(--shadow-light);
+    position: relative;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-red);
+  }
+  .product-card .card-img-wrapper {
+    position: relative;
+    height: 200px;
+    background: #fefefe;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .product-card .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-fast);
+  }
+  .product-card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+  .product-card .card-body {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-card .card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-card .card-text {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .product-card .card-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border-gray);
+    background: #fafafa;
+  }
+  .product-card .price {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary-red);
+  }
+  .product-card .btn-detail {
+    background-color: var(--primary-red);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background var(--transition-fast);
+    float: right;
+  }
+  .product-card .btn-detail:hover {
+    background-color: var(--secondary-red);
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Boş Durum Mesajı
+  ---------------------------------------------------------------------------------------------------- */
+  .empty-message {
+    background: #fff;
+    padding: 3rem 1rem;
+    border-radius: var(--card-radius);
+    text-align: center;
+    box-shadow: var(--shadow-light);
+    margin: 2rem 0;
+  }
+  .empty-message p {
+    font-size: 1rem;
+    color: var(--medium-gray);
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Sayfalama (Pagination) Stilleri
+  ---------------------------------------------------------------------------------------------------- */
+  .pagination-clean {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+  .pagination-clean .page-link {
+    border: 1px solid var(--border-gray);
+    border-radius: 8px;
+    margin: 0 4px;
+    padding: 8px 12px;
+    color: var(--medium-gray);
+    font-weight: 500;
+    background: #fff;
+    transition: background var(--transition-fast), color var(--transition-fast), border var(--transition-fast);
+  }
+  .pagination-clean .page-link:hover {
+    background-color: var(--primary-red);
+    color: #fff;
+    border-color: var(--primary-red);
+  }
+  .pagination-clean .page-item.active .page-link {
+    background-color: var(--primary-red);
+    color: #fff;
+    border-color: var(--primary-red);
+  }
+  .pagination-clean .page-item.disabled .page-link {
+    background-color: var(--light-gray);
+    color: var(--medium-gray);
+    border-color: var(--border-gray);
+    cursor: default;
+  }
+
+  /* ----------------------------------------------------------------------------------------------------
+     Responsive Tasarım
+  ---------------------------------------------------------------------------------------------------- */
+  @media (max-width: 992px) {
+    .products-grid {
+      gap: 1rem;
+    }
+    .product-card .card-img-wrapper {
+      height: 180px;
+    }
+    .product-card .card-body {
+      padding: 1rem;
+    }
+    .product-card .btn-detail {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+    }
+    .pagination-clean {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+  @media (max-width: 576px) {
+    .category-header h2 {
+      font-size: 1.5rem;
+    }
+    .product-card .card-img-wrapper {
+      height: 140px;
+    }
+    .product-card .card-title {
+      font-size: 1rem;
+    }
+    .product-card .card-text {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<div class="container">
+  <!-- Kategori Başlığı -->
+  <div style="color: white;" class="category-header">
+    <h2 style="color: white;">{{ category.name }}</h2>
   </div>
 
-  {# Sayfalama kodu varsa buraya ekleyin #}
+  <!-- Ürünler Grid -->
+  {% if products %}
+    <div class="products-grid">
+      {% for product in products %}
+        <div class="product-card">
+          <!-- Ürün Resmi -->
+          <div class="card-img-wrapper">
+            {% with img=product.get_featured_image %}
+              {% if img %}
+                <img src="{{ img.image.url }}" class="card-img-top" alt="{{ product.name }}">
+              {% else %}
+                <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Resim yok">
+              {% endif %}
+            {% endwith %}
+          </div>
+          <!-- Ürün Bilgileri -->
+          <div class="card-body">
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text">{{ product.description|truncatechars:60 }}</p>
+          </div>
+          <!-- Fiyat ve İncele Butonu -->
+          <div class="card-footer">
+            <span class="price">{{ product.get_min_price|floatformat:2 }}₺</span>
+            <a href="{{ product.get_absolute_url }}" class="btn-detail">İncele</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-message">
+      <p>Bu kategoride henüz aktif ürün bulunmuyor.</p>
+    </div>
+  {% endif %}
+
+  <!-- Sayfalama -->
   {% if is_paginated %}
-    <nav aria-label="Sayfalama">
-      <ul class="pagination justify-content-center mt-4">
+    <nav aria-label="Sayfalama" class="pagination-clean">
+      <ul class="pagination">
         {% if page_obj.has_previous %}
           <li class="page-item">
             <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Önceki">
-              <span aria-hidden="true">&laquo;</span>
+              &laquo;
             </a>
           </li>
         {% else %}
@@ -51,6 +318,7 @@
             <span class="page-link">&laquo;</span>
           </li>
         {% endif %}
+        
         {% for num in paginator.page_range %}
           {% if page_obj.number == num %}
             <li class="page-item active"><span class="page-link">{{ num }}</span></li>
@@ -58,10 +326,11 @@
             <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
           {% endif %}
         {% endfor %}
+        
         {% if page_obj.has_next %}
           <li class="page-item">
             <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Sonraki">
-              <span aria-hidden="true">&raquo;</span>
+              &raquo;
             </a>
           </li>
         {% else %}
@@ -72,4 +341,5 @@
       </ul>
     </nav>
   {% endif %}
+</div>
 {% endblock %}
