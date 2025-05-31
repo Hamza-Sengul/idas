@@ -1,103 +1,653 @@
 {# templates/navbar.html #}
 {% load static %}
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
-  <div class="container">
-    <!-- Logo (solda) -->
-    <a class="navbar-brand" href="{% url 'home' %}">
-      <img src="{% static 'img/logo.png' %}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
-      <span class="fw-bold">E-Ticaret</span>
-    </a>
+<style>
+  /* -----------------------------------------------------------
+     Premium Kırmızı Gradient Navbar Tasarımı
+  ------------------------------------------------------------ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    <!-- Mobilde collapse butonu -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+  :root {
+    /* Premium Kırmızı Tonları */
+    --crimson-primary: #c62d42;
+    --crimson-secondary: #8b1538;
+    --crimson-dark: #5a0f24;
+    --crimson-light: #ef4444;
+    --crimson-hover: #dc2626;
+    
+    /* Beyaz Tonları */
+    --pure-white: #ffffff;
+    --snow-white: #fefefe;
+    --ghost-white: #f8fafc;
+    
+    /* Premium Gradientler */
+    --gradient-primary: linear-gradient(135deg, #c62d42 0%, #8b1538 50%, #5a0f24 100%);
+    --gradient-hover: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+    --gradient-glass: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    
+    /* Shadows */
+    --shadow-crimson: 0 4px 20px rgba(198, 45, 66, 0.3);
+    --shadow-crimson-lg: 0 10px 40px -10px rgba(198, 45, 66, 0.25);
+    --shadow-elite: 0 15px 35px rgba(198, 45, 66, 0.2);
+    
+    /* Fonts */
+    --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
 
-    <!-- Menü içeriği (desktop ve mobil) -->
-    <div class="collapse navbar-collapse" id="mainNavbar">
-      <!-- Ortadaki Kategoriler -->
-      <ul class="navbar-nav mx-auto">
+  /* -----------------------------------------------------------
+     Ana Navbar Tasarımı
+  ------------------------------------------------------------ */
+  .navbar {
+    background: var(--gradient-primary) !important;
+    box-shadow: var(--shadow-crimson);
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    font-family: var(--font-primary);
+    transition: all 0.4s ease;
+    min-height: 75px;
+    border: none;
+  }
+
+  .navbar.scrolled {
+    box-shadow: var(--shadow-crimson-lg);
+    transform: translateY(-2px);
+  }
+
+  .nav-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 75px;
+    width: 100%;
+  }
+
+  /* -----------------------------------------------------------
+     Premium Logo Tasarımı
+  ------------------------------------------------------------ */
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .navbar-brand:hover {
+    transform: scale(1.05);
+  }
+
+  .navbar-brand img {
+    margin-right: 12px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .navbar-brand:hover img {
+    transform: rotate(-5deg) scale(1.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  .logo-text {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--pure-white);
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+  }
+
+  .navbar-brand:hover .logo-text {
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+  }
+
+  /* -----------------------------------------------------------
+     Navigation Menu
+  ------------------------------------------------------------ */
+  .nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-link {
+    color: var(--pure-white) !important;
+    text-decoration: none;
+    padding: 28px 18px;
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    background: none;
+  }
+
+  /* Hover Shine Effect */
+  .nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-glass);
+    transition: left 0.5s ease;
+  }
+
+  .nav-link:hover::before {
+    left: 100%;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    color: var(--pure-white) !important;
+  }
+
+  .nav-link.active,
+  .nav-item.active .nav-link {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 3px solid #ffd700;
+  }
+
+  /* -----------------------------------------------------------
+     Premium Dropdown Menu
+  ------------------------------------------------------------ */
+  .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--pure-white);
+    min-width: 280px;
+    box-shadow: var(--shadow-elite);
+    border-radius: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-15px);
+    transition: all 0.4s ease;
+    overflow: hidden;
+    border-top: 3px solid var(--crimson-primary);
+    z-index: 2000;
+  }
+
+  .nav-item:hover .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-item {
+    display: block;
+    color: #333 !important;
+    padding: 16px 24px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    text-transform: none;
+    letter-spacing: normal;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .dropdown-item:hover,
+  .dropdown-item:focus {
+    background: linear-gradient(90deg, #fff5f6, #ffeef1);
+    border-left-color: var(--crimson-primary);
+    padding-left: 28px;
+    color: var(--crimson-primary) !important;
+  }
+
+  .dropdown-item:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* -----------------------------------------------------------
+     Right Side Icons & Actions
+  ------------------------------------------------------------ */
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .icon-btn,
+  .btn-link {
+    color: var(--pure-white) !important;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+  }
+
+  .icon-btn:hover,
+  .btn-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: var(--pure-white) !important;
+  }
+
+  /* Badge System */
+  .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(45deg, #ff4757, #ff3742);
+    color: var(--pure-white);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid var(--pure-white);
+    animation: badgeFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes badgeFloat {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.1) translateY(-2px); }
+  }
+
+  /* -----------------------------------------------------------
+     Mobile Design
+  ------------------------------------------------------------ */
+  .mobile-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+  }
+
+  .bar {
+    width: 28px;
+    height: 3px;
+    background-color: var(--pure-white);
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+  }
+
+  .mobile-toggle.active .bar:nth-child(1) {
+    transform: rotate(-45deg) translate(-6px, 7px);
+  }
+
+  .mobile-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-toggle.active .bar:nth-child(3) {
+    transform: rotate(45deg) translate(-6px, -7px);
+  }
+
+  /* -----------------------------------------------------------
+     Responsive Design
+  ------------------------------------------------------------ */
+  @media screen and (max-width: 992px) {
+    .mobile-toggle {
+      display: flex;
+    }
+
+    .nav-menu {
+      position: fixed;
+      left: -100%;
+      top: 75px;
+      flex-direction: column;
+      background: var(--gradient-primary);
+      width: 100%;
+      text-align: center;
+      transition: 0.3s;
+      box-shadow: var(--shadow-crimson);
+      height: calc(100vh - 75px);
+      overflow-y: auto;
+      z-index: 1040;
+    }
+
+    .nav-menu.active {
+      left: 0;
+    }
+
+    .nav-item {
+      width: 100%;
+    }
+
+    .nav-link {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown {
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      box-shadow: none;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 0;
+      border-radius: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      border-top: none;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item.mobile-active .dropdown {
+      max-height: 400px;
+    }
+
+    .dropdown-item {
+      color: rgba(255, 255, 255, 0.9) !important;
+      border-left: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding-left: 24px;
+      color: var(--pure-white) !important;
+    }
+
+    .nav-icons {
+      gap: 8px;
+    }
+
+    .icon-btn,
+    .btn-link {
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .nav-container {
+      padding: 0 15px;
+    }
+
+    .logo-text {
+      font-size: 28px;
+    }
+
+    .nav-icons {
+      gap: 6px;
+    }
+  }
+
+  /* -----------------------------------------------------------
+     Body Spacing for Fixed Navbar
+  ------------------------------------------------------------ */
+  body {
+    padding-top: 95px;
+    font-family: var(--font-primary);
+  }
+
+  /* -----------------------------------------------------------
+     Premium Animations
+  ------------------------------------------------------------ */
+  .navbar {
+    animation: navbarLoad 1s ease-out;
+  }
+
+  @keyframes navbarLoad {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* -----------------------------------------------------------
+     Accessibility
+  ------------------------------------------------------------ */
+  .nav-link:focus,
+  .navbar-brand:focus,
+  .btn-link:focus,
+  .dropdown-item:focus {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="nav-container">
+      <!-- Premium Logo -->
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'img/idas2.png' %}" alt="Logo" width="48" height="48">
+        <span class="logo-text">E-Ticaret</span>
+      </a>
+      
+      <!-- Navigation Menu -->
+      <ul class="nav-menu" id="nav-menu">
         {% for category in menu_categories %}
           {% if category.children.all %}
-            {# ------------------------------------------------------------- #}
-            {# 1) Bu kategori ALT KATEGORİYE sahipse 'dropdown' yapısını kullan #}
-            {# ------------------------------------------------------------- #}
-            <li class="nav-item dropdown">
-              {# 'dropdown-toggle' ve 'data-bs-toggle="dropdown"' olduğunu kontrol et #}
-              <a class="nav-link dropdown-toggle" href="#" id="cat{{ category.id }}"
-                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <li class="nav-item">
+              <a href="{% url 'category_detail' category.slug %}" 
+                 class="nav-link{% if request.path == category.get_absolute_url %} active{% endif %}">
                 {{ category.name }}
               </a>
-              <ul class="dropdown-menu" aria-labelledby="cat{{ category.id }}">
+              <div class="dropdown">
                 {% for child in category.children.all %}
                   {% if child.is_active %}
-                    <li>
-                      <a class="dropdown-item" href="{% url 'category_detail' child.slug %}">
-                        {{ child.name }}
-                      </a>
-                    </li>
+                    <a href="{% url 'category_detail' child.slug %}" class="dropdown-item">
+                      {{ child.name }}
+                    </a>
                   {% endif %}
                 {% endfor %}
-              </ul>
+              </div>
             </li>
           {% else %}
-            {# ------------------------------------------------------------- #}
-            {# 2) Bu kategori ALT KATEGORİYE sahip DEĞİLSE normal link göster #}
-            {# ------------------------------------------------------------- #}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'category_detail' category.slug %}">
+              <a href="{% url 'category_detail' category.slug %}" 
+                 class="nav-link{% if request.path == category.get_absolute_url %} active{% endif %}">
                 {{ category.name }}
               </a>
             </li>
           {% endif %}
         {% endfor %}
       </ul>
-
-      <!-- Sağ taraftaki Giriş/Profil, Favori, Sepet, Çıkış -->
-      <ul class="navbar-nav">
+      
+      <!-- Right Side Icons & Dynamic Badges -->
+      <div class="nav-icons">
         {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'profile' %}">
-              <i class="bi bi-person-circle"></i> Profil
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'favorite_list' %}">
-              <i class="bi bi-heart"></i> Favoriler
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_cart' %}">
-              <i class="bi bi-cart"></i> Sepet
-            </a>
-          </li>
-          <li class="nav-item">
-            {# Çıkış işlemi POST form içinde yapılmalı #}
-            <form method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-link nav-link p-0">
-                <i class="bi bi-box-arrow-right"></i> Çıkış
-              </button>
-            </form>
-          </li>
+          <!-- Profil İkonu -->
+          <a href="{% url 'profile' %}" class="icon-btn" title="Profil">
+            <i class="fas fa-user"></i>
+          </a>
+  
+          <!-- Favoriler İkonu + Dinamik badge -->
+          <a href="{% url 'favorite_list' %}" class="icon-btn position-relative" title="Favoriler">
+            <i class="fas fa-heart"></i>
+            {% if favorite_count > 0 %}
+              <span class="badge">{{ favorite_count }}</span>
+            {% endif %}
+          </a>
+  
+          <!-- Sepet İkonu + Dinamik badge -->
+          <a href="{% url 'view_cart' %}" class="icon-btn position-relative" title="Sepet">
+            <i class="fas fa-shopping-cart"></i>
+            {% if cart_count > 0 %}
+              <span class="badge">{{ cart_count }}</span>
+            {% endif %}
+          </a>
+  
+          <!-- Çıkış (POST Form) -->
+          <form method="post" action="{% url 'logout' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn-link icon-btn" title="Çıkış">
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          </form>
         {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">
-              <i class="bi bi-box-arrow-in-right"></i> Giriş
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">
-              <i class="bi bi-person-plus"></i> Kayıt
-            </a>
-          </li>
+          <!-- Giriş ve Kayıt İkonları -->
+          <a href="{% url 'login' %}" class="icon-btn" title="Giriş">
+            <i class="fas fa-sign-in-alt"></i>
+          </a>
+          <a href="{% url 'register' %}" class="icon-btn" title="Kayıt">
+            <i class="fas fa-user-plus"></i>
+          </a>
         {% endif %}
-      </ul>
+        
+        <!-- (isteğe bağlı) Arama İkonu örneği -->
+        <!-- 
+        <div class="icon-btn" title="Arama">
+          <i class="fas fa-search"></i>
+        </div>
+        -->
+      </div>
+      
+      <!-- Mobile Toggle -->
+      <button class="mobile-toggle" id="mobile-toggle" type="button">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
-  </div>
-</nav>
-
-{# Navbar sabit olduğu için içerik üst üste binmesin diye boşluk bırakıyoruz #}
-<div style="margin-top: 70px;"></div>
+  </nav>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu toggle
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const navMenu = document.getElementById('nav-menu');
+  
+    if (mobileToggle && navMenu) {
+      mobileToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      });
+    }
+  
+    // Close mobile menu when clicking a normal nav-link (alt kategoriye tıklanması da engelleniyor)
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (mobileToggle) mobileToggle.classList.remove('active');
+        if (navMenu) navMenu.classList.remove('active');
+      });
+    });
+  
+    // Mobile dropdown toggle (Kategori → Alt kategori açma)
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (window.innerWidth <= 992) {
+          const dropdown = this.querySelector('.dropdown');
+          if (dropdown && dropdown.children.length > 0) {
+            e.preventDefault();
+            this.classList.toggle('mobile-active');
+          }
+        }
+      });
+    });
+  
+    // Scroll effects
+    let lastScrollTop = 0;
+    const navbar = document.querySelector('.navbar');
+    
+    window.addEventListener('scroll', function() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollTop > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      
+      // Hide/show navbar on scroll
+      if (scrollTop > lastScrollTop && scrollTop > 100) {
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        navbar.style.transform = 'translateY(0)';
+      }
+      
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+  
+    // Resize handling
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 992) {
+        if (navMenu) navMenu.classList.remove('active');
+        if (mobileToggle) mobileToggle.classList.remove('active');
+        
+        // Remove mobile-active class from nav items
+        document.querySelectorAll('.nav-item.mobile-active').forEach(item => {
+          item.classList.remove('mobile-active');
+        });
+      }
+    });
+  
+    // Badge visibility (0 veya negatif ise gizle)
+    document.querySelectorAll('.badge').forEach(badge => {
+      const count = parseInt(badge.textContent) || 0;
+      if (count <= 0) {
+        badge.style.display = 'none';
+      }
+    });
+  
+    // Accessibility: Escape key to close dropdowns
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.nav-item.mobile-active').forEach(item => {
+          item.classList.remove('mobile-active');
+        });
+        
+        if (navMenu) navMenu.classList.remove('active');
+        if (mobileToggle) mobileToggle.classList.remove('active');
+      }
+    });
+  
+    console.log('Premium Navbar initialized successfully!');
+  });
+  </script>
