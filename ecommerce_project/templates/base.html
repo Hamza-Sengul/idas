@@ -1,0 +1,140 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Ticaret Sitesi{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Özel CSS -->
+    
+<style>
+    /* static/css/styles.css */
+
+/* Genel gövde (body) ayarları */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  padding-top: 70px; /* Navbar sabit olduğu için içerik aşağıda başlar */
+}
+
+/* Kart gölgeleri için */
+.card {
+  border: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+}
+
+/* Footer stili */
+footer {
+  font-size: 0.9rem;
+}
+
+/* Navbar link hover rengi */
+.navbar-light .navbar-nav .nav-link:hover {
+  color: #0d6efd;
+}
+
+/* Ürün detay sayfasında büyük resim kimliği */
+#mainImage {
+  max-width: 100%;
+  height: auto;
+}
+
+</style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar include -->
+    {% include 'navbar.html' %}
+
+    <!-- Ana içerik -->
+    <main class="container my-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer include -->
+    {% include 'footer.html' %}
+
+    <!-- Bootstrap 5 JS ve Popper.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Özel JS -->
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // static/js/scripts.js
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Mobilde dropdown açma-kapama davranışı
+  var dropdownElements = document.querySelectorAll('.navbar .dropdown-toggle');
+  dropdownElements.forEach(function(dropdown) {
+    dropdown.addEventListener('click', function(e) {
+      var el = dropdown.nextElementSibling;
+      if (el.classList.contains('show')) {
+        // Eğer zaten açıksa kapat
+        el.classList.remove('show');
+      } else {
+        // Aksi halde aç
+        el.classList.add('show');
+      }
+    });
+  });
+});
+
+    </script>
+
+{# base.html dosyanızın en altına, Bootstrap JS CDN’den sonra ekleyin #}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Ekran genişliğini kontrol et (992px = lg breakpoint)
+    function isDesktop() {
+      return window.innerWidth >= 992;
+    }
+
+    // Tüm .nav-item.dropdown elemanlarını seç
+    var dropdowns = document.querySelectorAll('.navbar .nav-item.dropdown');
+
+    dropdowns.forEach(function(dropdown) {
+      // Mouse over / mouse out olaylarını ekle
+      dropdown.addEventListener('mouseenter', function(e) {
+        if (isDesktop()) {
+          var toggleLink = dropdown.querySelector('.dropdown-toggle');
+          var menu = dropdown.querySelector('.dropdown-menu');
+
+          // Menüyü açmak için gerekli sınıfları ve aria-expanded değerini ayarla
+          toggleLink.classList.add('show');
+          toggleLink.setAttribute('aria-expanded', 'true');
+          menu.classList.add('show');
+        }
+      });
+
+      dropdown.addEventListener('mouseleave', function(e) {
+        if (isDesktop()) {
+          var toggleLink = dropdown.querySelector('.dropdown-toggle');
+          var menu = dropdown.querySelector('.dropdown-menu');
+
+          // Menüyü kapatmak için sınıfları ve aria-expanded değerini geri döndür
+          toggleLink.classList.remove('show');
+          toggleLink.setAttribute('aria-expanded', 'false');
+          menu.classList.remove('show');
+        }
+      });
+    });
+
+    // Pencere boyutu değiştiğinde (örneğin yatay/dikey çevirmede) dropdownları yeniden konfigüre edebiliriz
+    window.addEventListener('resize', function() {
+      // İsterseniz burada ek bir şey yapmanıza gerek yok; isDesktop() her seferinde güncel değeri dönecek.
+    });
+  });
+</script>
+
+</body>
+</html>

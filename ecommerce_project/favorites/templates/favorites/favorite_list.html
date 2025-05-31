@@ -1,0 +1,358 @@
+<!-- favorites/templates/favorites/favorite_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Favori Ürünler - E-Ticaret{% endblock %}
+
+{% block content %}
+<style>
+    /* Corporate Red Color Palette */
+    :root {
+        --primary-red: #dc2626;
+        --secondary-red: #b91c1c;
+        --dark-red: #991b1b;
+        --light-red: #fecaca;
+        --accent-red: #ef4444;
+        --dark-gray: #1f2937;
+        --medium-gray: #6b7280;
+        --light-gray: #f9fafb;
+        --border-gray: #e5e7eb;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--dark-gray) 0%, var(--primary-red) 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 3rem;
+        border-radius: 0 0 24px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 70%);
+        opacity: 0.6;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.9);
+        text-align: center;
+        margin: 0.5rem 0 0 0;
+        font-weight: 300;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Clean Product Cards */
+    .product-card {
+        border: 1px solid var(--border-gray);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        border-color: var(--primary-red);
+    }
+    
+    .card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        height: 200px;
+        background: white;
+        flex-shrink: 0;
+    }
+    
+    .card-img-top {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .product-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    .price-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--primary-red);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    }
+    
+    .card-body-clean {
+        padding: 1.25rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark-gray);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+        letter-spacing: -0.01em;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .product-description {
+        color: var(--medium-gray);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .card-actions {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-gray);
+    }
+    
+    /* Clean Button Styles */
+    .btn-clean {
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 10px 16px;
+        transition: all 0.3s ease;
+        border: none;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+    
+    .btn-primary-clean {
+        background: var(--primary-red);
+        color: white;
+        box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+    }
+    
+    .btn-primary-clean:hover {
+        background: var(--secondary-red);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+        color: white;
+    }
+    
+    .btn-danger-clean {
+        background: #dc3545;
+        color: white;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+    }
+    
+    .btn-danger-clean:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        color: white;
+    }
+    
+    /* Action Button Layout */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .action-buttons .btn-clean:first-child {
+        flex: 1;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--light-gray);
+        border-radius: 12px;
+        margin: 2rem 0;
+    }
+    
+    .empty-state i {
+        color: var(--medium-gray);
+        margin-bottom: 1.5rem;
+        font-size: 4rem;
+    }
+    
+    .empty-state h3 {
+        color: var(--dark-gray);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .empty-state p {
+        color: var(--medium-gray);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .empty-state .btn-clean {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .page-subtitle {
+            font-size: 1rem;
+        }
+        
+        .page-header {
+            padding: 2rem 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card-img-wrapper {
+            height: 180px;
+        }
+        
+        .card-body-clean {
+            padding: 1rem;
+        }
+        
+        .btn-clean {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+    }
+    
+    /* Subtle Animation */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .product-card {
+        animation: fadeIn 0.6s ease forwards;
+        opacity: 0;
+    }
+    
+    .product-card:nth-child(1) { animation-delay: 0.1s; }
+    .product-card:nth-child(2) { animation-delay: 0.2s; }
+    .product-card:nth-child(3) { animation-delay: 0.3s; }
+    .product-card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="bi bi-heart-fill me-3"></i>Favori Ürünleriniz
+        </h1>
+        <p class="page-subtitle">Beğendiğiniz ürünleri burada bulabilirsiniz</p>
+    </div>
+</div>
+
+<!-- Favorites Content -->
+<div class="container">
+    {% if favorites %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for fav in favorites %}
+                {% with product=fav.product %}
+                    <div class="col">
+                        <div class="card product-card">
+                            
+                            <!-- Product Image -->
+                            <div class="card-img-wrapper">
+                                {% with img=product.get_featured_image %}
+                                    {% if img %}
+                                        <img src="{{ img.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'img/no-image.png' %}" class="card-img-top" alt="Resim yok">
+                                    {% endif %}
+                                {% endwith %}
+                                <div class="price-badge">
+                                    {{ product.get_min_price|floatformat:2 }}₺
+                                </div>
+                            </div>
+
+                            <!-- Product Details -->
+                            <div class="card-body-clean">
+                                <h5 class="product-title">{{ product.name }}</h5>
+                                <p class="product-description">{{ product.description|truncatechars:80 }}</p>
+                                
+                                <!-- Action Buttons -->
+                                <div class="card-actions">
+                                    <div class="action-buttons">
+                                        <a href="{{ product.get_absolute_url }}" class="btn btn-clean btn-primary-clean">
+                                            <i class="bi bi-eye me-1"></i> İncele
+                                        </a>
+                                        <a href="{% url 'remove_from_favorites' fav.id %}" class="btn btn-clean btn-danger-clean">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="bi bi-heart"></i>
+            <h3>Henüz favori ürününüz yok</h3>
+            <p>Beğendiğiniz ürünleri favorilere ekleyerek daha sonra kolayca bulabilirsiniz</p>
+            <a href="{% url 'home' %}" class="btn btn-clean btn-primary-clean">
+                <i class="bi bi-shop me-2"></i>Alışverişe Başla
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

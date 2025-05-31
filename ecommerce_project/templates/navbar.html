@@ -1,0 +1,103 @@
+{# templates/navbar.html #}
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+  <div class="container">
+    <!-- Logo (solda) -->
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <img src="{% static 'img/logo.png' %}" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+      <span class="fw-bold">E-Ticaret</span>
+    </a>
+
+    <!-- Mobilde collapse butonu -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menü içeriği (desktop ve mobil) -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <!-- Ortadaki Kategoriler -->
+      <ul class="navbar-nav mx-auto">
+        {% for category in menu_categories %}
+          {% if category.children.all %}
+            {# ------------------------------------------------------------- #}
+            {# 1) Bu kategori ALT KATEGORİYE sahipse 'dropdown' yapısını kullan #}
+            {# ------------------------------------------------------------- #}
+            <li class="nav-item dropdown">
+              {# 'dropdown-toggle' ve 'data-bs-toggle="dropdown"' olduğunu kontrol et #}
+              <a class="nav-link dropdown-toggle" href="#" id="cat{{ category.id }}"
+                 role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ category.name }}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="cat{{ category.id }}">
+                {% for child in category.children.all %}
+                  {% if child.is_active %}
+                    <li>
+                      <a class="dropdown-item" href="{% url 'category_detail' child.slug %}">
+                        {{ child.name }}
+                      </a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </li>
+          {% else %}
+            {# ------------------------------------------------------------- #}
+            {# 2) Bu kategori ALT KATEGORİYE sahip DEĞİLSE normal link göster #}
+            {# ------------------------------------------------------------- #}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'category_detail' category.slug %}">
+                {{ category.name }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+
+      <!-- Sağ taraftaki Giriş/Profil, Favori, Sepet, Çıkış -->
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' %}">
+              <i class="bi bi-person-circle"></i> Profil
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'favorite_list' %}">
+              <i class="bi bi-heart"></i> Favoriler
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'view_cart' %}">
+              <i class="bi bi-cart"></i> Sepet
+            </a>
+          </li>
+          <li class="nav-item">
+            {# Çıkış işlemi POST form içinde yapılmalı #}
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link p-0">
+                <i class="bi bi-box-arrow-right"></i> Çıkış
+              </button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">
+              <i class="bi bi-box-arrow-in-right"></i> Giriş
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">
+              <i class="bi bi-person-plus"></i> Kayıt
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{# Navbar sabit olduğu için içerik üst üste binmesin diye boşluk bırakıyoruz #}
+<div style="margin-top: 70px;"></div>

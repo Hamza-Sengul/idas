@@ -1,0 +1,449 @@
+<!-- users/templates/users/profile.html -->
+{% extends 'base.html' %}
+
+{% block title %}Profilim - E-Ticaret{% endblock %}
+
+{% block content %}
+<style>
+    /* Corporate Red Color Palette */
+    :root {
+        --primary-red: #dc2626;
+        --secondary-red: #b91c1c;
+        --dark-red: #991b1b;
+        --light-red: #fecaca;
+        --accent-red: #ef4444;
+        --dark-gray: #1f2937;
+        --medium-gray: #6b7280;
+        --light-gray: #f9fafb;
+        --border-gray: #e5e7eb;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--dark-gray) 0%, var(--primary-red) 100%);
+        color: white;
+        padding: 3rem 0 2rem;
+        margin-bottom: 3rem;
+        border-radius: 0 0 24px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 70%);
+        opacity: 0.6;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 2;
+    }
+    
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.9);
+        text-align: center;
+        margin: 0.5rem 0 0 0;
+        font-weight: 300;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Profile Card */
+    .profile-card {
+        background: white;
+        border: 1px solid var(--border-gray);
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, var(--light-gray) 0%, white 100%);
+        padding: 2rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-gray);
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-red), var(--secondary-red));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem auto;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark-gray);
+        margin: 0;
+    }
+    
+    .profile-role {
+        color: var(--medium-gray);
+        font-size: 1rem;
+        margin: 0.25rem 0 0 0;
+    }
+    
+    /* Profile Info */
+    .profile-info {
+        padding: 0;
+    }
+    
+    .info-item {
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid var(--border-gray);
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-item:hover {
+        background: var(--light-gray);
+    }
+    
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--light-red), rgba(220, 38, 38, 0.1));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-red);
+        font-size: 1.1rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .info-content {
+        flex: 1;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: var(--medium-gray);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 0.25rem 0;
+    }
+    
+    .info-value {
+        font-size: 1.1rem;
+        color: var(--dark-gray);
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+        background: white;
+        border: 1px solid var(--border-gray);
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    
+    .actions-header {
+        background: linear-gradient(135deg, var(--light-gray) 0%, white 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--border-gray);
+    }
+    
+    .actions-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--dark-gray);
+        margin: 0;
+    }
+    
+    .actions-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    
+    .action-item {
+        border-bottom: 1px solid var(--border-gray);
+    }
+    
+    .action-item:last-child {
+        border-bottom: none;
+    }
+    
+    .action-link {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem 2rem;
+        color: var(--dark-gray);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .action-link:hover {
+        background: var(--light-gray);
+        color: var(--primary-red);
+        transform: translateX(4px);
+    }
+    
+    .action-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--light-red), rgba(220, 38, 38, 0.1));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-red);
+        font-size: 1.1rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .action-link:hover .action-icon {
+        background: var(--primary-red);
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    .action-content {
+        flex: 1;
+    }
+    
+    .action-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem 0;
+    }
+    
+    .action-desc {
+        font-size: 0.9rem;
+        color: var(--medium-gray);
+        margin: 0;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .page-subtitle {
+            font-size: 1rem;
+        }
+        
+        .page-header {
+            padding: 2rem 0 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-header,
+        .actions-header {
+            padding: 1.5rem;
+        }
+        
+        .info-item,
+        .action-link {
+            padding: 1rem 1.5rem;
+        }
+        
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        
+        .profile-name {
+            font-size: 1.3rem;
+        }
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .profile-card,
+    .quick-actions {
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .quick-actions {
+        animation-delay: 0.2s;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">
+            <i class="bi bi-person-circle me-3"></i>Profilim
+        </h1>
+        <p class="page-subtitle">Hesap bilgilerinizi görüntüleyin ve yönetin</p>
+    </div>
+</div>
+
+<!-- Profile Content -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ user.first_name|first|default:user.username|first|upper }}{{ user.last_name|first|upper|default:"" }}
+                    </div>
+                    <h2 class="profile-name">
+                        {% if user.get_full_name %}
+                            {{ user.get_full_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </h2>
+                    <p class="profile-role">Müşteri</p>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="info-content">
+                            <p class="info-label">Kullanıcı Adı</p>
+                            <p class="info-value">{{ user.username }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <p class="info-label">E-posta Adresi</p>
+                            <p class="info-value">{{ user.email|default:"Belirtilmemiş" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-card-text"></i>
+                        </div>
+                        <div class="info-content">
+                            <p class="info-label">Ad Soyad</p>
+                            <p class="info-value">
+                                {% if user.get_full_name %}
+                                    {{ user.get_full_name }}
+                                {% else %}
+                                    Belirtilmemiş
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div class="info-content">
+                            <p class="info-label">Üyelik Tarihi</p>
+                            <p class="info-value">{{ user.date_joined|date:"d F Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="actions-header">
+                    <h3 class="actions-title">Hızlı İşlemler</h3>
+                </div>
+                
+                <ul class="actions-list">
+                    <li class="action-item">
+                        <a href="{% url 'favorite_list' %}" class="action-link">
+                            <div class="action-icon">
+                                <i class="bi bi-heart"></i>
+                            </div>
+                            <div class="action-content">
+                                <p class="action-title">Favori Ürünlerim</p>
+                                <p class="action-desc">Beğendiğiniz ürünleri görüntüleyin</p>
+                            </div>
+                        </a>
+                    </li>
+                    
+                    <li class="action-item">
+                        <a href="" class="action-link">
+                            <div class="action-icon">
+                                <i class="bi bi-cart"></i>
+                            </div>
+                            <div class="action-content">
+                                <p class="action-title">Sepetim</p>
+                                <p class="action-desc">Alışveriş sepetinizi kontrol edin</p>
+                            </div>
+                        </a>
+                    </li>
+                    
+                    <li class="action-item">
+                        <a href="{% url 'home' %}" class="action-link">
+                            <div class="action-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <div class="action-content">
+                                <p class="action-title">Alışverişe Devam Et</p>
+                                <p class="action-desc">Yeni ürünleri keşfedin</p>
+                            </div>
+                        </a>
+                    </li>
+                    
+                    <li class="action-item">
+                        <a href="{% url 'logout' %}" class="action-link">
+                            <div class="action-icon">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </div>
+                            <div class="action-content">
+                                <p class="action-title">Çıkış Yap</p>
+                                <p class="action-desc">Hesabınızdan güvenli çıkış yapın</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
